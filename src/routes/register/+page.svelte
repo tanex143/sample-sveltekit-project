@@ -1,5 +1,5 @@
 <script>
-    import { supabase } from "$lib/supabase";
+    import supabase from "$lib/supabase";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme, successTheme } from "$lib/customToast";
     import { goto } from "$app/navigation";
@@ -8,7 +8,6 @@
     let cpassword;
 
     const handleRegister = async () => {
-        console.log("binded", email, password, cpassword);
         if (password !== cpassword) {
             return toast.push("Password does not match.", errorTheme);
         }
@@ -19,8 +18,7 @@
             );
         }
 
-        const { user, error } = await supabase.auth.signIn(email, password);
-        console.log("error", error);
+        const { error } = await supabase.auth.signUp({ email, password });
         if (!error) {
             toast.push("Registration successful.", successTheme);
             goto("/login");
