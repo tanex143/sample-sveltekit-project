@@ -7,6 +7,29 @@
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast.js";
 
+    let onEdit = false;
+    let toEditId = null;
+    let editedName = "";
+
+    const handleOnEdit = (id, title) => {
+        onEdit = true;
+        toEditId = id;
+        editedName = title;
+    };
+
+    const handleSaveChanges = async () => {
+        const { error } = await supabase
+            .from("groups")
+            .update({ title: editedName })
+            .eq("id", toEditId);
+        if (error) {
+            return toast.push(error.message, errorTheme);
+        }
+        onEdit = false;
+        toEditId = null;
+        editedName = "";
+    };
+
     const handleShowModal = () => {
         openModal(Modal);
     };
@@ -23,7 +46,7 @@
     const handleDelete = async (id) => {
         const { error } = await supabase.from("groups").delete().eq("id", id);
         if (error) {
-            return toast.push("error", errorTheme);
+            return toast.push(error.message, errorTheme);
         }
     };
 
@@ -90,25 +113,40 @@
         {:else}
             {#each $groupsStore as groupTitle (groupTitle.id)}
                 <div class="grid grid-cols-12">
-                    <button
-                        on:click={() => handleSelectGroup(groupTitle)}
-                        class="col-span-11 font-semibold py-1 hover:text-slate-300 text-start"
-                    >
-                        {groupTitle.title}
-                    </button>
-                    <Button
-                        size="small"
-                        color="bg-slate-500"
-                        class="focus:outline-none focus-within:outline-none p-0 m-0 bg-color-400"
-                        outline={false}>:</Button
-                    >
-                    <Dropdown>
-                        <DropdownItem>Edit</DropdownItem>
-                        <DropdownItem
-                            on:click={() => handleDelete(groupTitle.id)}
-                            >Delete</DropdownItem
+                    {#if onEdit && toEditId === groupTitle.id}
+                        <input
+                            type="text"
+                            class="col-span-11 border-2 border-slate-700 rounded-md py-1 px-2"
+                            bind:value={editedName}
+                            on:blur={handleSaveChanges}
+                        />
+                    {:else}
+                        <button
+                            on:click={() => handleSelectGroup(groupTitle)}
+                            class="col-span-11 font-semibold py-1 hover:text-slate-300 text-start"
                         >
-                    </Dropdown>
+                            {groupTitle.title}
+                        </button>
+                        <Button
+                            size="small"
+                            color="bg-slate-500"
+                            class="focus:outline-none focus-within:outline-none p-0 m-0 bg-color-400"
+                            outline={false}>:</Button
+                        >
+                        <Dropdown>
+                            <DropdownItem
+                                on:click={() =>
+                                    handleOnEdit(
+                                        groupTitle.id,
+                                        groupTitle.title
+                                    )}>Edit</DropdownItem
+                            >
+                            <DropdownItem
+                                on:click={() => handleDelete(groupTitle.id)}
+                                >Delete</DropdownItem
+                            >
+                        </Dropdown>
+                    {/if}
                 </div>
             {/each}
         {/if}
