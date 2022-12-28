@@ -1,5 +1,5 @@
 <script>
-    import "../app.css";
+    import "../app.postcss";
     import { SvelteToast } from "@zerodevx/svelte-toast";
 </script>
 

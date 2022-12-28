@@ -2,7 +2,7 @@
     import supabase from "$lib/supabase";
     import { goto } from "$app/navigation";
     import { toast } from "@zerodevx/svelte-toast";
-    import { errorTheme } from "$lib/customToast";
+    import { errorTheme } from "$lib/customToast.js";
 
     let email;
     let password;
