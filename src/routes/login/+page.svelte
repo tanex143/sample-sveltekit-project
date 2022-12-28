@@ -1,8 +1,27 @@
 <script>
-    const handleLogin = (e) => {
-        console.log("event", e);
-        console.log("event", e.target.email.value);
-        console.log("event", e.target.password.value);
+    import supabase from "$lib/supabase";
+    import { goto } from "$app/navigation";
+    import { toast } from "@zerodevx/svelte-toast";
+    import { errorTheme } from "$lib/customToast";
+
+    let email;
+    let password;
+    let loading = false;
+
+    const handleLogin = async () => {
+        loading = true;
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (!error) {
+            goto("/dashboard");
+            loading = false;
+        } else {
+            toast.push(error.message, errorTheme);
+            loading = false;
+            return;
+        }
     };
 </script>
 
@@ -22,10 +41,12 @@
                         ><small>Email</small></label
                     >
                     <input
+                        bind:value={email}
                         name="email"
-                        type="text"
+                        type="email"
                         placeholder="Email"
-                        class="w-full p-2 rounded-md focus:outline-none bg-gray-300"
+                        class="w-full p-2 rounded-md focus:outline-none"
+                        style="background-color: #E8F0FE"
                     />
                 </div>
 
@@ -34,14 +55,17 @@
                         ><small>Password</small></label
                     >
                     <input
+                        bind:value={password}
                         name="password"
                         type="password"
                         placeholder="Password"
-                        class="w-full p-2 rounded-md focus:outline-none bg-gray-300"
+                        class="w-full p-2 rounded-md focus:outline-none"
+                        style="background-color: #E8F0FE"
                     />
                 </div>
                 <div>
                     <button
+                        disabled={loading}
                         class="w-full bg-slate-700 text-white p-2 rounded-md mt-5 hover:bg-slate-600"
                         type="submit"
                     >

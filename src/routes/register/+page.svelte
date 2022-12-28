@@ -6,12 +6,16 @@
     let email;
     let password;
     let cpassword;
+    let signupLoading = false;
 
     const handleRegister = async () => {
+        signupLoading = true;
         if (password !== cpassword) {
+            signupLoading = false;
             return toast.push("Password does not match.", errorTheme);
         }
         if (password.length < 6 || cpassword.length < 6) {
+            signupLoading = false;
             return toast.push(
                 "Password must be at least 6 characters.",
                 errorTheme
@@ -22,8 +26,10 @@
         if (!error) {
             toast.push("Registration successful.", successTheme);
             goto("/login");
+            signupLoading = false;
         } else {
             toast.push(resp, errorTheme);
+            signupLoading = false;
             return;
         }
     };
@@ -43,7 +49,8 @@
                         bind:value={email}
                         type="email"
                         placeholder="Email"
-                        class="w-full p-2 rounded-md focus:outline-none bg-gray-300"
+                        class="w-full p-2 rounded-md focus:outline-none"
+                        style="background-color: #E8F0FE"
                         required
                     />
                 </div>
@@ -53,7 +60,8 @@
                         bind:value={password}
                         type="password"
                         placeholder="Password"
-                        class="w-full p-2 rounded-md focus:outline-none bg-gray-300"
+                        class="w-full p-2 rounded-md focus:outline-none"
+                        style="background-color: #E8F0FE"
                         required
                     />
                 </div>
@@ -63,12 +71,14 @@
                         bind:value={cpassword}
                         type="password"
                         placeholder="Password"
-                        class="w-full p-2 rounded-md focus:outline-none bg-gray-300"
+                        class="w-full p-2 rounded-md focus:outline-none"
+                        style="background-color: #E8F0FE"
                         required
                     />
                 </div>
                 <div>
                     <button
+                        disabled={signupLoading}
                         type="submit"
                         class="w-full bg-slate-700 text-white p-2 rounded-md mt-5 hover:bg-slate-600"
                     >
