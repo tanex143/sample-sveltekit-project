@@ -1,5 +1,23 @@
 <script>
+    import supabase from "$lib/supabase";
     import { Modals, closeModal } from "svelte-modals";
+    import { browser } from "$app/environment";
+    import { goto } from "$app/navigation";
+    import { toast } from "@zerodevx/svelte-toast";
+    import { errorTheme } from "$lib/customToast.js";
+
+    const checkIfLoggedIn = async () => {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) {
+            toast.push("Session expired.", errorTheme);
+            if (browser) {
+                goto("/");
+            }
+        }
+    };
+    $: {
+        checkIfLoggedIn();
+    }
 </script>
 
 <div class="bg-slate-700">
@@ -8,6 +26,7 @@
         <div
             slot="backdrop"
             class="backdrop"
+            aria-hidden="true"
             on:click|preventDefault={closeModal}
         />
     </Modals>

@@ -35,9 +35,9 @@
     };
 </script>
 
-<div class="flex h-screen justify-center items-center bg-slate-700">
+<div class="flex h-screen justify-center items-center bg-slate-600">
     <div
-        class="text-center bg-gray-500 rounded-lg xl:w-3/12 lg:w-4/12 md:w-6/12 sm:w-8/12 w-11/12"
+        class="text-center bg-gray-400 rounded-lg xl:w-3/12 lg:w-4/12 md:w-6/12 sm:w-8/12 w-11/12"
     >
         <div class="p-10">
             <h1 class="text-3xl font-bold">Register</h1>
@@ -80,7 +80,7 @@
                     <button
                         disabled={signupLoading}
                         type="submit"
-                        class="w-full bg-slate-700 text-white p-2 rounded-md mt-5 hover:bg-slate-600"
+                        class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
                     >
                         Register
                     </button>

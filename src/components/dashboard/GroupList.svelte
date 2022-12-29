@@ -95,7 +95,7 @@
     }
 </script>
 
-<div class="col-span-2 bg-slate-500 rounded-md p-3 overflow-y-auto">
+<div class="col-span-2 bg-slate-400 rounded-md p-3 overflow-y-auto">
     <div class="text-start">
         <p class="border-b-4 border-slate-700 pb-2">Groups</p>
     </div>

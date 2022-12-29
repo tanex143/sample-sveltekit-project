@@ -1,5 +1,5 @@
 <div
-    class="grid grid-cols-12 gap-2 bg-slate-500 pt-3 pl-3 pr-3 rounded-md mb-3"
+    class="grid grid-cols-12 gap-2 bg-slate-400 pt-3 pl-3 pr-3 rounded-md mb-3"
 >
     <div class="col-span-12">
         <div class="flex gap-3">
