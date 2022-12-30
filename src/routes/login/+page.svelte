@@ -2,7 +2,8 @@
     import supabase from "$lib/supabase";
     import { goto } from "$app/navigation";
     import { toast } from "@zerodevx/svelte-toast";
-    import { errorTheme } from "$lib/customToast.js";
+    import { errorTheme } from "$lib/customToast";
+    import userDataStore from "../../stores/userData";
 
     let email;
     let password;
@@ -14,7 +15,11 @@
             email,
             password,
         });
-        console.log("data", data);
+        const { data: userRef } = await supabase
+            .from("usersData")
+            .select("*")
+            .eq("id", data.user.id);
+        userDataStore.set(userRef[0]);
         if (!error) {
             goto("/dashboard");
             loading = false;

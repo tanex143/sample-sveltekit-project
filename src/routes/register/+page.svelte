@@ -22,13 +22,27 @@
             );
         }
 
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({ email, password });
         if (!error) {
-            toast.push("Registration successful.", successTheme);
-            goto("/login");
+            if (data) {
+                const { error: userError } = await supabase
+                    .from("usersData")
+                    .insert({
+                        created_at: data.user.created_at,
+                        email: data.user.email,
+                        id: data.user.id,
+                        last_sign_in_at: data.user.last_sign_in_at,
+                        updated_at: data.user.updated_at,
+                    });
+                if (!userError) {
+                    toast.push("Registration successful.", successTheme);
+                    goto("/login");
+                }
+            }
+
             signupLoading = false;
         } else {
-            toast.push(resp, errorTheme);
+            toast.push(error.message, errorTheme);
             signupLoading = false;
             return;
         }

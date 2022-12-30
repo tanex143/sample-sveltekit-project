@@ -1,19 +1,34 @@
 <script>
+    import supabase from "$lib/supabase";
     import { closeModal } from "svelte-modals";
     import { fade } from "svelte/transition";
-    import supabase from "$lib/supabase";
-    // import { generateRandomId } from "$lib/utils";
+    import { toast } from "@zerodevx/svelte-toast";
+    import userDataStore from "../../stores/userData";
+    import { errorTheme } from "$lib/customToast";
+    import { selectedGroupStore } from "../../stores/groups";
 
     export let isOpen;
     let groupTitle;
 
     const handleAddGroup = async () => {
-        const { error } = await supabase.from("groups").insert({
-            title: groupTitle,
-            // id: generateRandomId(),
-            // user_id: user.id,
-            // members: [user.id],
+        const { data, error } = await supabase
+            .from("groups")
+            .insert({
+                title: groupTitle,
+                createdBy: $userDataStore.email,
+            })
+            .select();
+
+        if (error) {
+            toast.push(error.message, errorTheme);
+            return;
+        }
+
+        await supabase.from("groupMembers").insert({
+            groupId: data[0].id,
+            userId: $userDataStore.id,
         });
+
         closeModal();
     };
 </script>
@@ -22,11 +37,13 @@
     <div role="dialog" class="modal" transition:fade>
         <div class="contents w-2/6">
             <p class="text-center font-semibold text-2xl mt-3">Add Group</p>
+            <!-- svelte-ignore a11y-autofocus -->
             <input
                 type="text"
                 bind:value={groupTitle}
                 class="py-2 px-3 mt-2 rounded-md bg-slate-300 focus:outline-none"
                 placeholder="Group Title"
+                autofocus={true}
             />
             <button
                 class="w-full rounded-md bg-slate-700 py-2 mt-5 mb-3 text-center text-white"
