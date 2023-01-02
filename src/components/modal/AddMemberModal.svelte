@@ -3,7 +3,6 @@
     import { closeModal } from "svelte-modals";
     import { fade } from "svelte/transition";
     import { toast } from "@zerodevx/svelte-toast";
-    import userDataStore from "../../stores/userData";
     import { errorTheme } from "$lib/customToast";
     import { selectedGroupStore } from "../../stores/groups";
 

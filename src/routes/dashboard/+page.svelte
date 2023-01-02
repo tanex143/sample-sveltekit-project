@@ -3,6 +3,7 @@
     import { toast } from "@zerodevx/svelte-toast";
     import { goto } from "$app/navigation";
     import { Spinner, Button } from "flowbite-svelte";
+    import { openModal } from "svelte-modals";
     import {
         selectedGroupStore,
         selectedGroupLoading,
@@ -13,12 +14,17 @@
     import commentsStores from "../../stores/comments";
     import { errorTheme } from "$lib/customToast";
     import MemberList from "../../components/dashboard/MemberList.svelte";
+    import ProfileModal from "../../components/modal/ProfileModal.svelte";
 
     let currentComment;
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
         goto("/");
+    };
+
+    const handleShowProfileModal = () => {
+        openModal(ProfileModal);
     };
 
     const handleGetComments = async () => {
@@ -134,9 +140,17 @@
         <div class="col-start-3 col-span-8 text-center py-1 text-white">
             <div class="flex justify-between">
                 <div>
-                    <p>Hello there!</p>
+                    <p>
+                        Hello, {$userDataStore.firstName
+                            ? $userDataStore.firstName
+                            : $userDataStore.email.split("@")[0]}!
+                    </p>
                 </div>
-                <Button>Profile</Button>
+                <button
+                    class="rounded-md bg-blue-600 py-1 px-5 hover:bg-blue-500"
+                    on:click|preventDefault={handleShowProfileModal}
+                    >Profile</button
+                >
                 <div class="col-start-6">
                     <button on:click|preventDefault={handleLogout}
                         >Logout</button
