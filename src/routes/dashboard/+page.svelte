@@ -2,7 +2,7 @@
     import supabase from "$lib/supabase";
     import { toast } from "@zerodevx/svelte-toast";
     import { goto } from "$app/navigation";
-    import { Spinner } from "flowbite-svelte";
+    import { Spinner, Button } from "flowbite-svelte";
     import {
         selectedGroupStore,
         selectedGroupLoading,
@@ -12,6 +12,7 @@
     import GroupList from "../../components/dashboard/GroupList.svelte";
     import commentsStores from "../../stores/comments";
     import { errorTheme } from "$lib/customToast";
+    import MemberList from "../../components/dashboard/MemberList.svelte";
 
     let currentComment;
 
@@ -50,7 +51,6 @@
     };
 
     const handleAddComments = async () => {
-        console.log("added");
         const payload = {
             comments: currentComment,
             type: "text",
@@ -128,14 +128,34 @@
 </script>
 
 <div class="flex flex-col h-screen justify-center items-center">
-    <div class="grid grid-cols-6 mb-10">
-        <div>
-            <p>Hello there!</p>
-        </div>
-        <div class="col-start-6">
-            <button on:click|preventDefault={handleLogout}>Logout</button>
+    <div
+        class="grid grid-cols-12 mb-8 gap-4 rounded-lg xl:w-10/12 sm:w-11/12 w-12/12"
+    >
+        <div class="col-start-3 col-span-8 text-center py-1 text-white">
+            <div class="flex justify-between">
+                <div>
+                    <p>Hello there!</p>
+                </div>
+                <Button>Profile</Button>
+                <div class="col-start-6">
+                    <button on:click|preventDefault={handleLogout}
+                        >Logout</button
+                    >
+                </div>
+            </div>
         </div>
     </div>
+    {#if $selectedGroupStore}
+        <div
+            class="grid grid-cols-12 gap-4 rounded-lg xl:w-10/12 sm:w-11/12 w-12/12"
+        >
+            <div class="col-start-3 col-span-8 text-center py-1 text-white">
+                {"--->"}
+                {$selectedGroupStore.title}
+                {"<---"}
+            </div>
+        </div>
+    {/if}
     <div
         class="grid grid-cols-12 gap-4 rounded-lg xl:w-10/12 sm:w-11/12 w-12/12 h-4/6"
     >
@@ -169,15 +189,8 @@
                 </div>
             {/if}
         </div>
-        <div class="col-span-2 bg-slate-400 rounded-md p-3 overflow-y-auto">
-            <div class="text-start">
-                <p class="border-b-4 border-slate-700 pb-2">Members</p>
-            </div>
-            <div class="text-start mt-2">
-                <p>member 1</p>
-                <p>member 2</p>
-            </div>
-        </div>
+
+        <MemberList />
     </div>
 
     <div

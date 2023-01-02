@@ -36,7 +36,10 @@
     };
 
     const getGroupsData = async () => {
-        const { data } = await supabase.from("groups").select("*");
+        const { data } = await supabase
+            .from("groups")
+            .select()
+            .eq("email", $userDataStore.email);
         groupsStore.set(data);
     };
 
@@ -46,17 +49,7 @@
 
     const handleDelete = async (id) => {
         await supabase.from("groupComments").delete().eq("group_Id", id);
-        const { error: memberError } = await supabase
-            .from("groupMembers")
-            .delete()
-            .eq("groupId", id)
-            .eq("userId", $userDataStore.id);
-
-        if ($selectedGroupStore.id === id) {
-            selectedGroupStore.set(null);
-        }
-
-        console.log("memberError", memberError);
+        await supabase.from("groupMemberss").delete().eq("groupId", id);
 
         const { error } = await supabase.from("groups").delete().eq("id", id);
         if (error) {
@@ -71,7 +64,9 @@
                 "postgres_changes",
                 { event: "INSERT", schema: "*", table: "groups" },
                 (payload) => {
-                    groupsStore.update((curr) => [...curr, payload.new]);
+                    if (payload.new.email === $userDataStore.email) {
+                        groupsStore.update((curr) => [...curr, payload.new]);
+                    }
                 }
             )
             .on(
@@ -79,8 +74,6 @@
                 { event: "DELETE", schema: "*", table: "groups" },
                 (payload) => {
                     groupsStore.update((curr) => {
-                        console.log("curr", curr);
-                        console.log("update", payload);
                         return curr.filter(
                             (group) => group.id !== payload.old.id
                         );
