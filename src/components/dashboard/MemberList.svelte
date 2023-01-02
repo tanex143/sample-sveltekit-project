@@ -3,7 +3,6 @@
     import { openModal } from "svelte-modals";
     import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
     import AddMemberList from "../modal/AddMemberModal.svelte";
-    import userDataStore from "../../stores/userData.js";
     import membersStore from "../../stores/members.js";
     import { selectedGroupStore } from "../../stores/groups.js";
 
@@ -13,11 +12,6 @@
             .select()
             .eq("groupId", $selectedGroupStore.id);
 
-        // const uniqueMembers = [
-        //     ...data
-        //         .reduce((curr, next) => curr.set(next.email, next), new Map())
-        //         .values(),
-        // ].filter((f) => f !== undefined);
         membersStore.set(data);
     };
 

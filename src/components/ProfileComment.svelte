@@ -1,7 +1,5 @@
 <script>
     export let commentData;
-
-    console.log("commentData", commentData);
 </script>
 
 <div

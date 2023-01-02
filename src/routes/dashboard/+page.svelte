@@ -2,7 +2,7 @@
     import supabase from "$lib/supabase";
     import { toast } from "@zerodevx/svelte-toast";
     import { goto } from "$app/navigation";
-    import { Spinner, Button } from "flowbite-svelte";
+    import { Spinner } from "flowbite-svelte";
     import { openModal } from "svelte-modals";
     import {
         selectedGroupStore,
