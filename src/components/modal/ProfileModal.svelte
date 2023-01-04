@@ -14,48 +14,71 @@
     const handleUpdateProfile = async () => {
         updateProfileLoading.set(true);
         const randomId = Math.floor(Math.random() * 1000000000);
+        console.log(profile);
 
-        const { data: uploadImgErrorData, error: uploadImgError } =
-            await supabase.storage
+        if (typeof profile !== "string") {
+            const { data: uploadImgErrorData, error: uploadImgError } =
+                await supabase.storage
+                    .from("profiles")
+                    .upload(
+                        `private/${profile.name || randomId}__${randomId}`,
+                        profile
+                    );
+
+            if (uploadImgError) {
+                toast.push(
+                    `Error on uploading profile: ${uploadImgError.message} `,
+                    errorTheme
+                );
+                return;
+            }
+
+            const { data: downloadImgData } = await supabase.storage
                 .from("profiles")
-                .upload(`private/${profile.name}__${randomId}`, profile, {
-                    cacheControl: "3600",
-                    upsert: false,
-                });
+                .getPublicUrl(uploadImgErrorData.path);
 
-        if (uploadImgError) {
-            toast.push(
-                `Error on uploading profile: ${uploadImgError.message} `,
-                errorTheme
-            );
-            return;
+            const payload = {
+                firstName: $userDataStore.firstName,
+                lastName: $userDataStore.lastName,
+                profile: downloadImgData.publicUrl,
+            };
+
+            const { data, error } = await supabase
+                .from("usersData")
+                .update(payload)
+                .eq("id", $userDataStore.id)
+                .select();
+
+            if (error) {
+                toast.push(error.message, errorTheme);
+                return;
+            }
+            if (data) {
+                userDataStore.set(data[0]);
+                toast.push("Profile updated", successTheme);
+            }
+        } else {
+            const payload = {
+                firstName: $userDataStore.firstName,
+                lastName: $userDataStore.lastName,
+            };
+
+            const { data, error } = await supabase
+                .from("usersData")
+                .update(payload)
+                .eq("id", $userDataStore.id)
+                .select();
+
+            if (error) {
+                toast.push(error.message, errorTheme);
+                return;
+            }
+            if (data) {
+                userDataStore.set(data[0]);
+                toast.push("Profile updated", successTheme);
+            }
         }
 
-        const { data: downloadImgData } = await supabase.storage
-            .from("profiles")
-            .download(uploadImgErrorData.path, 60);
-
-        const createdURL = webkitURL.createObjectURL(downloadImgData);
-        const payload = {
-            firstName: $userDataStore.firstName,
-            lastName: $userDataStore.lastName,
-            profile: createdURL,
-        };
-
-        const { data, error } = await supabase
-            .from("usersData")
-            .update(payload)
-            .eq("id", $userDataStore.id)
-            .select();
-
-        if (error) {
-            toast.push(error.message, errorTheme);
-            return;
-        }
-        if (data) {
-            userDataStore.set(data[0]);
-            toast.push("Profile updated", successTheme);
-        }
         updateProfileLoading.set(false);
     };
 </script>
@@ -69,8 +92,8 @@
             <div class="flex justify-center gap-5 align-middle items-center">
                 {#if $userDataStore.profile}
                     <img
-                        src={$userDataStore.profile.split("?")[0]}
-                        class="w-32 h-32 rounded-md"
+                        src={$userDataStore.profile}
+                        class="w-32 h-32 rounded-md object-cover"
                         alt=""
                     />
                 {:else}

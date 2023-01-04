@@ -4,6 +4,7 @@
     import { goto } from "$app/navigation";
     import { Spinner } from "flowbite-svelte";
     import { openModal } from "svelte-modals";
+    import { browser } from "$app/environment";
     import {
         selectedGroupStore,
         selectedGroupLoading,
@@ -90,13 +91,18 @@
                     ]);
 
                     // scroll to bottom
-                    setTimeout(() => {
-                        document.getElementById("commentsDisplay").scrollTo({
-                            top: document.getElementById("commentsDisplay")
-                                .scrollHeight,
-                            behavior: "smooth",
-                        });
-                    }, 1000);
+                    if (browser) {
+                        setTimeout(() => {
+                            document
+                                .getElementById("commentsDisplay")
+                                .scrollTo({
+                                    top: document.getElementById(
+                                        "commentsDisplay"
+                                    ).scrollHeight,
+                                    behavior: "smooth",
+                                });
+                        }, 1000);
+                    }
                 }
             )
             .on(
