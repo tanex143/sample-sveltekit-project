@@ -131,6 +131,8 @@
         $selectedGroupStore && handleGetComments();
         listenGetCommentsData();
     }
+
+    console.log("user", $userDataStore);
 </script>
 
 <div class="flex flex-col h-screen justify-center items-center">
