@@ -1,49 +1,36 @@
 <script>
     import supabase from "$lib/supabase";
     import { toast } from "@zerodevx/svelte-toast";
+    import * as auth from "$lib/auth/auth";
+    import { Spinner } from "flowbite-svelte";
     import { errorTheme, successTheme } from "$lib/customToast";
     import { goto } from "$app/navigation";
+    import { signupLoading } from "../../stores/loading";
     let email;
     let password;
     let cpassword;
-    let signupLoading = false;
 
     const handleRegister = async () => {
-        signupLoading = true;
+        signupLoading.set(true);
         if (password !== cpassword) {
-            signupLoading = false;
+            signupLoading.set(false);
             return toast.push("Password does not match.", errorTheme);
         }
         if (password.length < 6 || cpassword.length < 6) {
-            signupLoading = false;
+            signupLoading.set(false);
             return toast.push(
                 "Password must be at least 6 characters.",
                 errorTheme
             );
         }
 
-        const { data, error } = await supabase.auth.signUp({ email, password });
-        if (!error) {
-            if (data) {
-                const { error: userError } = await supabase
-                    .from("usersData")
-                    .insert({
-                        created_at: data.user.created_at,
-                        email: data.user.email,
-                        id: data.user.id,
-                        last_sign_in_at: data.user.last_sign_in_at,
-                        updated_at: data.user.updated_at,
-                    });
-                if (!userError) {
-                    toast.push("Registration successful.", successTheme);
-                    goto("/login");
-                }
-            }
-
-            signupLoading = false;
+        const resp = await auth.signUpUser(email, password);
+        if (resp.status === "success") {
+            toast.push("Registration successful.", successTheme);
+            goto("/login");
         } else {
-            toast.push(error.message, errorTheme);
-            signupLoading = false;
+            toast.push(resp.message, errorTheme);
+            signupLoading.set(false);
             return;
         }
     };
@@ -91,13 +78,18 @@
                     />
                 </div>
                 <div>
-                    <button
-                        disabled={signupLoading}
-                        type="submit"
-                        class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
-                    >
-                        Register
-                    </button>
+                    {#if $signupLoading}
+                        <button class="w-full bg-slate-600 p-1 rounded-md mt-5">
+                            <Spinner />
+                        </button>
+                    {:else}
+                        <button
+                            type="submit"
+                            class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
+                        >
+                            Register
+                        </button>
+                    {/if}
                 </div>
             </form>
             <div class="mt-2">
