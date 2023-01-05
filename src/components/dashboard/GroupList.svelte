@@ -2,11 +2,16 @@
     import { openModal } from "svelte-modals";
     import Modal from "../modal/Modal.svelte";
     import { groupsStore, selectedGroupStore } from "../../stores/groups.js";
-    import supabase from "$lib/supabase";
     import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast.js";
     import userDataStore from "../../stores/userData.js";
+    import {
+        editGroup,
+        getGroups,
+        deleteGroup,
+        groupsCRUDListener,
+    } from "../../lib/groups/groups";
 
     let onEdit = false;
     let toEditId = null;
@@ -19,12 +24,9 @@
     };
 
     const handleSaveChanges = async () => {
-        const { error } = await supabase
-            .from("groups")
-            .update({ title: editedName })
-            .eq("id", toEditId);
-        if (error) {
-            return toast.push(error.message, errorTheme);
+        const resp = await editGroup(editedName, toEditId);
+        if (resp.status === "error") {
+            return toast.push(resp.message, errorTheme);
         }
         onEdit = false;
         toEditId = null;
@@ -36,65 +38,22 @@
     };
 
     const getGroupsData = async () => {
-        const { data } = await supabase
-            .from("groups")
-            .select()
-            .eq("email", $userDataStore.email);
-        groupsStore.set(data);
+        await getGroups($userDataStore.email);
     };
 
     const handleSelectGroup = (value) => {
         selectedGroupStore.set(value);
     };
 
-    const handleDelete = async (id) => {
-        await supabase.from("groupComments").delete().eq("group_Id", id);
-        await supabase.from("groupMemberss").delete().eq("groupId", id);
-
-        const { error } = await supabase.from("groups").delete().eq("id", id);
-        if (error) {
+    const handleDelete = async (groupId) => {
+        const resp = await deleteGroup(groupId, $selectedGroupStore);
+        if (resp.status === "error") {
             return toast.push(error.message, errorTheme);
         }
     };
 
     const listenGetGroupsData = async () => {
-        await supabase
-            .channel("public:groups")
-            .on(
-                "postgres_changes",
-                { event: "INSERT", schema: "*", table: "groups" },
-                (payload) => {
-                    if (payload.new.email === $userDataStore.email) {
-                        groupsStore.update((curr) => [...curr, payload.new]);
-                    }
-                }
-            )
-            .on(
-                "postgres_changes",
-                { event: "DELETE", schema: "*", table: "groups" },
-                (payload) => {
-                    groupsStore.update((curr) => {
-                        return curr.filter(
-                            (group) => group.id !== payload.old.id
-                        );
-                    });
-                }
-            )
-            .on(
-                "postgres_changes",
-                { event: "UPDATE", schema: "*", table: "groups" },
-                (payload) => {
-                    groupsStore.update((curr) => {
-                        return curr.map((group) => {
-                            if (group.id === payload.new.id) {
-                                return payload.new;
-                            }
-                            return group;
-                        });
-                    });
-                }
-            )
-            .subscribe();
+        await groupsCRUDListener($userDataStore.email);
     };
 
     $: {
@@ -127,6 +86,8 @@
                             class="col-span-11 border-2 border-slate-700 rounded-md py-1 px-2"
                             bind:value={editedName}
                             on:blur={handleSaveChanges}
+                            on:keyup={(e) =>
+                                e.key === "Enter" && handleSaveChanges()}
                         />
                     {:else}
                         <button

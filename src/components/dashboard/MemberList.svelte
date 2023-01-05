@@ -1,18 +1,17 @@
 <script>
-    import supabase from "$lib/supabase";
     import { openModal } from "svelte-modals";
     import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
     import AddMemberList from "../modal/AddMemberModal.svelte";
     import membersStore from "../../stores/members.js";
     import { selectedGroupStore } from "../../stores/groups.js";
+    import {
+        deleteMember,
+        getMembers,
+        memberCRUDListener,
+    } from "../../lib/members/members.js";
 
     const getMembersData = async () => {
-        const { data } = await supabase
-            .from("groupMemberss")
-            .select()
-            .eq("groupId", $selectedGroupStore.id);
-
-        membersStore.set(data);
+        await getMembers($selectedGroupStore.id);
     };
 
     const handleShowModal = () => {
@@ -20,40 +19,15 @@
     };
 
     const handleDelete = async (id) => {
-        const { error: memberError } = await supabase
-            .from("groupMemberss")
-            .delete()
-            .eq("id", id);
+        const resp = await deleteMember(id);
 
-        if (memberError) {
-            return toast.push(error.message, errorTheme);
+        if (resp.status === "error") {
+            return toast.push(resp.message, errorTheme);
         }
     };
 
     const listenGetMembersData = async () => {
-        await supabase
-            .channel("public:groupMemberss")
-            .on(
-                "postgres_changes",
-                { event: "INSERT", schema: "*", table: "groupMemberss" },
-                (payload) => {
-                    if (payload.new.groupId === $selectedGroupStore.id) {
-                        membersStore.update((curr) => [...curr, payload.new]);
-                    }
-                }
-            )
-            .on(
-                "postgres_changes",
-                { event: "DELETE", schema: "*", table: "groupMemberss" },
-                (payload) => {
-                    membersStore.update((curr) => {
-                        return curr.filter(
-                            (group) => group.id !== payload.old.id
-                        );
-                    });
-                }
-            )
-            .subscribe();
+        await memberCRUDListener($selectedGroupStore.id);
     };
 
     $: {

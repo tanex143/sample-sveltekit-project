@@ -1,34 +1,32 @@
 <script>
-    import supabase from "$lib/supabase";
     import { closeModal } from "svelte-modals";
     import { fade } from "svelte/transition";
     import { toast } from "@zerodevx/svelte-toast";
     import userDataStore from "../../stores/userData";
     import { errorTheme } from "$lib/customToast";
+    import { addGroup } from "../../lib/groups/groups.js";
+    import { addGroupLoading } from "../../stores/loading.js";
+    import { Spinner } from "flowbite-svelte";
 
     export let isOpen;
     let groupTitle;
 
     const handleAddGroup = async () => {
-        const { data, error } = await supabase
-            .from("groups")
-            .insert({
-                title: groupTitle,
-                createdBy: $userDataStore.email,
-                type: "owner",
-                email: $userDataStore.email,
-            })
-            .select();
+        addGroupLoading.set(true);
+        const payload = {
+            title: groupTitle,
+            createdBy: $userDataStore.email,
+            type: "owner",
+            email: $userDataStore.email,
+        };
 
-        if (error) {
-            toast.push(error.message, errorTheme);
+        const resp = await addGroup(payload, $userDataStore.id);
+
+        if (resp.status === "error") {
+            toast.push(resp.message, errorTheme);
             return;
         }
-
-        await supabase.from("groupMembers").insert({
-            groupId: data[0].id,
-            userId: $userDataStore.id,
-        });
+        addGroupLoading.set(false);
 
         closeModal();
     };
@@ -46,10 +44,18 @@
                 placeholder="Group Title"
                 autofocus={true}
             />
-            <button
-                class="w-full rounded-md bg-slate-700 py-2 mt-5 mb-3 text-center text-white"
-                on:click={handleAddGroup}>ADD</button
-            >
+            {#if $addGroupLoading}
+                <button
+                    class="w-full rounded-md bg-slate-700 py-1 mt-5 mb-3 text-center"
+                >
+                    <Spinner />
+                </button>
+            {:else}
+                <button
+                    class="w-full rounded-md bg-slate-700 py-2 mt-5 mb-3 text-center text-white"
+                    on:click={handleAddGroup}>ADD</button
+                >
+            {/if}
         </div>
     </div>
 {/if}
