@@ -2,15 +2,19 @@
     import "../app.postcss";
     import supabase from "$lib/supabase";
     import { SvelteToast } from "@zerodevx/svelte-toast";
-    import { goto } from "$app/navigation";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast.js";
+    import { browser } from "$app/environment";
+    import { redirect } from "@sveltejs/kit";
 
     const handleListenToLogout = async () => {
         await supabase.auth.onAuthStateChange((event) => {
             if (event == "TOKEN_REFRESHED") {
                 toast.push("Session expired.", errorTheme);
-                goto("/login");
+
+                if (browser) {
+                    redirect("/login");
+                }
             }
         });
     };
