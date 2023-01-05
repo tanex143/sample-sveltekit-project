@@ -32,7 +32,7 @@
 
     $: {
         $selectedGroupStore && getMembersData();
-        listenGetMembersData();
+        $selectedGroupStore && listenGetMembersData();
     }
 </script>
 

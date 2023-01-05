@@ -6,6 +6,7 @@
     import { errorTheme, successTheme } from "$lib/customToast.js";
     import { toast } from "@zerodevx/svelte-toast";
     import { updateProfileLoading } from "../../stores/loading.js";
+    import { updateProfile } from "../../lib/profile/profile.js";
 
     export let isOpen;
     let profile;
@@ -13,72 +14,21 @@
 
     const handleUpdateProfile = async () => {
         updateProfileLoading.set(true);
-        const randomId = Math.floor(Math.random() * 1000000000);
+        const resp = await updateProfile(
+            profile,
+            $userDataStore.firstName,
+            $userDataStore.lastName,
+            $userDataStore.id
+        );
 
-        if (typeof profile !== "string") {
-            const { data: uploadImgErrorData, error: uploadImgError } =
-                await supabase.storage
-                    .from("profiles")
-                    .upload(
-                        `private/${profile.name || randomId}__${randomId}`,
-                        profile
-                    );
-
-            if (uploadImgError) {
-                toast.push(
-                    `Error on uploading profile: ${uploadImgError.message} `,
-                    errorTheme
-                );
-                return;
-            }
-
-            const { data: downloadImgData } = await supabase.storage
-                .from("profiles")
-                .getPublicUrl(uploadImgErrorData.path);
-
-            const payload = {
-                firstName: $userDataStore.firstName,
-                lastName: $userDataStore.lastName,
-                profile: downloadImgData.publicUrl,
-            };
-
-            const { data, error } = await supabase
-                .from("usersData")
-                .update(payload)
-                .eq("id", $userDataStore.id)
-                .select();
-
-            if (error) {
-                toast.push(error.message, errorTheme);
-                return;
-            }
-            if (data) {
-                userDataStore.set(data[0]);
-                toast.push("Profile updated", successTheme);
-            }
+        if (resp.status === "error") {
+            toast.push(resp.message, errorTheme);
         } else {
-            const payload = {
-                firstName: $userDataStore.firstName,
-                lastName: $userDataStore.lastName,
-            };
-
-            const { data, error } = await supabase
-                .from("usersData")
-                .update(payload)
-                .eq("id", $userDataStore.id)
-                .select();
-
-            if (error) {
-                toast.push(error.message, errorTheme);
-                return;
-            }
-            if (data) {
-                userDataStore.set(data[0]);
-                toast.push("Profile updated", successTheme);
-            }
+            toast.push(resp.message, successTheme);
         }
 
         updateProfileLoading.set(false);
+        return;
     };
 </script>
 

@@ -1,4 +1,5 @@
 <script>
+    import userDataStore from "../stores/userData";
     export let commentData;
 </script>
 
@@ -24,7 +25,11 @@
                             : commentData.user.email.split("@")[0]}
                     </p>
                 </div>
-                <p class="text-xs ">Member | {commentData.created_at}</p>
+                <p class="text-xs ">
+                    {$userDataStore.id === commentData.userId
+                        ? "Owner"
+                        : "Member"} | {commentData.created_at}
+                </p>
             </div>
         </div>
     </div>

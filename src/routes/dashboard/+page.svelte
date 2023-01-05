@@ -15,9 +15,9 @@
     import { signOutUser } from "../../lib/auth/auth";
     import {
         getComments,
-        addComments,
+        addComment,
         supabaseCRUDListener,
-    } from "../../lib/comments/comments";
+    } from "../../lib/comments/comments.js";
 
     let currentComment;
 
@@ -47,7 +47,7 @@
             group_Id: $selectedGroupStore.id,
         };
         currentComment = "";
-        const resp = await addComments(payload);
+        const resp = await addComment(payload);
         if (resp.status === "error") {
             toast.push(resp.message, errorTheme);
             return;
