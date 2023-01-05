@@ -46,7 +46,6 @@
                 "postgres_changes",
                 { event: "DELETE", schema: "*", table: "groupMemberss" },
                 (payload) => {
-                    console.log("payload", payload);
                     membersStore.update((curr) => {
                         return curr.filter(
                             (group) => group.id !== payload.old.id
@@ -61,7 +60,6 @@
         $selectedGroupStore && getMembersData();
         listenGetMembersData();
     }
-    console.log("memberStore", $membersStore);
 </script>
 
 <div class="col-span-2 bg-slate-400 rounded-md p-3 overflow-y-auto">

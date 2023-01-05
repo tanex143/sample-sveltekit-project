@@ -14,7 +14,6 @@
     const handleUpdateProfile = async () => {
         updateProfileLoading.set(true);
         const randomId = Math.floor(Math.random() * 1000000000);
-        console.log(profile);
 
         if (typeof profile !== "string") {
             const { data: uploadImgErrorData, error: uploadImgError } =

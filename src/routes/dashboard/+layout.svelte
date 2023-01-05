@@ -11,13 +11,12 @@
         if (!data.session) {
             toast.push("Session expired.", errorTheme);
             if (browser) {
+                localStorage.clear();
                 goto("/");
             }
         }
     };
-    $: {
-        checkIfLoggedIn();
-    }
+    $: checkIfLoggedIn();
 </script>
 
 <div class="bg-slate-700">

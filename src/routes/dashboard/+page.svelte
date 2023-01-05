@@ -16,12 +16,17 @@
     import { errorTheme } from "$lib/customToast";
     import MemberList from "../../components/dashboard/MemberList.svelte";
     import ProfileModal from "../../components/modal/ProfileModal.svelte";
+    import { signOutUser } from "../../lib/auth/auth";
 
     let currentComment;
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
-        goto("/");
+        const resp = await signOutUser();
+        if (resp === "success") {
+            goto("/");
+        } else {
+            toast.push(resp, errorTheme);
+        }
     };
 
     const handleShowProfileModal = () => {
@@ -68,7 +73,8 @@
         currentComment = "";
         const { error } = await supabase.from("groupComments").insert(payload);
         if (error) {
-            console.log("error", error);
+            toast.push(error.message, errorTheme);
+            return;
         }
     };
 
@@ -79,7 +85,6 @@
                 "postgres_changes",
                 { event: "INSERT", schema: "*", table: "groupComments" },
                 async (payload) => {
-                    console.log("payload", payload);
                     const { data: user } = await supabase
                         .from("usersData")
                         .select("id, email, firstName, lastName, profile")
@@ -137,8 +142,6 @@
         $selectedGroupStore && handleGetComments();
         listenGetCommentsData();
     }
-
-    console.log("user", $userDataStore);
 </script>
 
 <div class="flex flex-col h-screen justify-center items-center">
@@ -148,11 +151,15 @@
         <div class="col-start-3 col-span-8 text-center py-1 text-white">
             <div class="flex justify-between">
                 <div>
-                    <p>
-                        Hello, {$userDataStore.firstName
-                            ? $userDataStore.firstName
-                            : $userDataStore.email.split("@")[0]}!
-                    </p>
+                    {#if $userDataStore && $userDataStore.firstName}
+                        <p>
+                            Hello, {$userDataStore.firstName
+                                ? $userDataStore.firstName
+                                : $userDataStore.email.split("@")[0]}!
+                        </p>
+                    {:else}
+                        <p>Hello!</p>
+                    {/if}
                 </div>
                 <button
                     class="rounded-md bg-blue-600 py-1 px-5 hover:bg-blue-500"

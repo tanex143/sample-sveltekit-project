@@ -42,9 +42,15 @@ export const signInUser = async (email, password) => {
             .select("*")
             .eq("id", data?.user?.id);
         //@ts-ignore
-        userDataStore.set(userRef[0]);
+        userDataStore.set({ ...userRef[0], isLoggedIn: true });
         return { status: "success", message: "User logged in" };
     } else {
         return { status: "error", message: error.message };
     }
+};
+
+export const signOutUser = async () => {
+    await supabase.auth.signOut();
+    localStorage.clear();
+    return "success";
 };
