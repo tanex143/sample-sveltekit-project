@@ -1,7 +1,6 @@
 <script>
-    import supabase from "$lib/supabase";
     import { toast } from "@zerodevx/svelte-toast";
-    import * as auth from "$lib/auth/auth";
+    import { signUpUser } from "$lib/auth/auth";
     import { Spinner } from "flowbite-svelte";
     import { errorTheme, successTheme } from "$lib/customToast";
     import { goto } from "$app/navigation";
@@ -24,7 +23,7 @@
             );
         }
 
-        const resp = await auth.signUpUser(email, password);
+        const resp = await signUpUser(email, password);
         if (resp.status === "success") {
             toast.push("Registration successful.", successTheme);
             goto("/login");

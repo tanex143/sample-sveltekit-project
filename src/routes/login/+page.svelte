@@ -1,31 +1,25 @@
 <script>
-    import supabase from "$lib/supabase";
     import { goto } from "$app/navigation";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast";
-    import userDataStore from "../../stores/userData";
+    import { Spinner } from "flowbite-svelte";
+    import { loginLoading } from "../../stores/loading";
+    import { signInUser } from "../../lib/auth/auth";
 
     let email;
     let password;
-    let loading = false;
 
     const handleLogin = async () => {
-        loading = true;
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-        const { data: userRef } = await supabase
-            .from("usersData")
-            .select("*")
-            .eq("id", data.user.id);
-        userDataStore.set(userRef[0]);
-        if (!error) {
+        loginLoading.set(true);
+
+        const resp = await signInUser(email, password);
+
+        if (resp.status === "success") {
+            loginLoading.set(false);
             goto("/dashboard");
-            loading = false;
         } else {
             toast.push(error.message, errorTheme);
-            loading = false;
+            loginLoading.set(false);
             return;
         }
     };
@@ -70,13 +64,18 @@
                     />
                 </div>
                 <div>
-                    <button
-                        disabled={loading}
-                        class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
-                        type="submit"
-                    >
-                        Login
-                    </button>
+                    {#if $loginLoading}
+                        <button class="w-full bg-slate-600 p-2 rounded-md mt-5">
+                            <Spinner />
+                        </button>
+                    {:else}
+                        <button
+                            class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
+                            type="submit"
+                        >
+                            Login
+                        </button>
+                    {/if}
                 </div>
                 <div class="mt-2">
                     <small>

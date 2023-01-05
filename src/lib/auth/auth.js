@@ -1,4 +1,5 @@
 import supabase from "../supabase";
+import userDataStore from "./../../stores/userData";
 
 export const signUpUser = async (email, password) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
@@ -15,7 +16,7 @@ export const signUpUser = async (email, password) => {
                     updated_at: data?.user?.updated_at,
                 });
             if (userError) {
-                return { status: "error", message: userError };
+                return { status: "error", message: userError.message };
             } else {
                 return {
                     status: "success",
@@ -26,5 +27,24 @@ export const signUpUser = async (email, password) => {
         }
     } else {
         return { status: "error", message: error };
+    }
+};
+
+export const signInUser = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+
+    if (!error) {
+        const { data: userRef } = await supabase
+            .from("usersData")
+            .select("*")
+            .eq("id", data?.user?.id);
+        //@ts-ignore
+        userDataStore.set(userRef[0]);
+        return { status: "success", message: "User logged in" };
+    } else {
+        return { status: "error", message: error.message };
     }
 };
