@@ -1,5 +1,5 @@
 <script>
-    import supabase from "$lib/supabase";
+    import supabase from "$db/database/supabase";
     import { Modals, closeModal } from "svelte-modals";
     import { browser } from "$app/environment";
     import { goto } from "$app/navigation";

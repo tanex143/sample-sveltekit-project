@@ -1,4 +1,4 @@
-import supabase from "../../lib/supabase";
+import supabase from "$db/database/supabase";
 
 export const actions = {
     register: async ({ request }) => {

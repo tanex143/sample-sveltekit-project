@@ -1,5 +1,5 @@
 <script>
-    import supabase from "$lib/supabase";
+    import supabase from "$db/database/supabase";
     import { closeModal } from "svelte-modals";
     import { fade } from "svelte/transition";
     import { toast } from "@zerodevx/svelte-toast";

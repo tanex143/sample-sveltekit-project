@@ -1,5 +1,5 @@
 <script>
-    import supabase from "$lib/supabase";
+    import supabase from "$db/database/supabase";
     import { fade } from "svelte/transition";
     import { Spinner } from "flowbite-svelte";
     import userDataStore from "../../stores/userData";

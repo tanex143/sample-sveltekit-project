@@ -4,7 +4,7 @@
     import { errorTheme } from "$lib/customToast";
     import { Spinner } from "flowbite-svelte";
     import { loginLoading } from "../stores/loading";
-    import { signInUser } from "../lib/auth/auth";
+    import { signInUser } from "$db/auth/auth";
 
     let email;
     let password;

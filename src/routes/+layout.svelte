@@ -1,6 +1,6 @@
 <script>
     import "../app.postcss";
-    import supabase from "$lib/supabase";
+    import supabase from "$db/database/supabase.js";
     import { SvelteToast } from "@zerodevx/svelte-toast";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast.js";
