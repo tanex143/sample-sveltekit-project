@@ -1,0 +1,63 @@
+import supabase from "../../lib/supabase";
+import { signupLoading } from "./../../stores/loading";
+
+export const actions = {
+    register: async ({ request }) => {
+        const formData = await request.formData();
+        const email = formData.get("email");
+        const password = formData.get("password");
+        const cpassword = formData.get("cpassword");
+
+        console.log("passwords", password, cpassword);
+        console.log("email", email);
+
+        signupLoading.set(true);
+        if (password !== cpassword) {
+            signupLoading.set(false);
+            return {
+                status: "error",
+                message: "Passwords do not match.",
+                email,
+                password,
+                cpassword,
+            };
+        }
+        if (password.length < 6 || cpassword.length < 6) {
+            signupLoading.set(false);
+            return {
+                status: "error",
+                message: "Password must be at least 6 characters.",
+                email,
+                password,
+                cpassword,
+            };
+        }
+
+        const { data, error } = await supabase.auth.signUp({ email, password });
+
+        if (!error) {
+            if (data) {
+                const { error: userError } = await supabase
+                    .from("usersData")
+                    .insert({
+                        created_at: data?.user?.created_at,
+                        email: data?.user?.email,
+                        id: data?.user?.id,
+                        last_sign_in_at: data?.user?.last_sign_in_at,
+                        updated_at: data?.user?.updated_at,
+                    });
+                if (userError) {
+                    return { status: "error", message: userError.message };
+                } else {
+                    return {
+                        status: "success",
+                        message: "User created",
+                        path: "/",
+                    };
+                }
+            }
+        } else {
+            return { status: "error", message: error };
+        }
+    },
+};

@@ -5,6 +5,7 @@
     import { Spinner } from "flowbite-svelte";
     import { loginLoading } from "../../stores/loading";
     import { signInUser } from "../../lib/auth/auth";
+    import { enhance } from "$app/forms";
 
     let email;
     let password;
@@ -35,13 +36,13 @@
             </h1>
             <p class="text-3xl font-bold">Supabase</p>
             <br />
-            <form on:submit|preventDefault={handleLogin}>
+            <!-- <form on:submit|preventDefault={handleLogin} > -->
+            <form method="POST" action="?/login" use:enhance>
                 <div class="flex flex-col justify-start">
                     <label for="email" class="text-start pl-1"
                         ><small>Email</small></label
                     >
                     <input
-                        bind:value={email}
                         name="email"
                         type="email"
                         placeholder="Email"
@@ -55,7 +56,6 @@
                         ><small>Password</small></label
                     >
                     <input
-                        bind:value={password}
                         name="password"
                         type="password"
                         placeholder="Password"
@@ -71,7 +71,6 @@
                     {:else}
                         <button
                             class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
-                            type="submit"
                         >
                             Login
                         </button>

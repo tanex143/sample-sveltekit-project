@@ -19,9 +19,7 @@
         });
     };
 
-    $: {
-        handleListenToLogout();
-    }
+    $: handleListenToLogout();
 </script>
 
 <!-- this is to initialize the toast component -->
