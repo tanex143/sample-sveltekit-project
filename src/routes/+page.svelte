@@ -5,21 +5,19 @@
     import { Spinner } from "flowbite-svelte";
     import { loginLoading } from "../stores/loading";
     import { signInUser } from "../lib/auth/auth";
-    import { enhance } from "$app/forms";
 
     let email;
     let password;
 
     const handleLogin = async () => {
         loginLoading.set(true);
-
         const resp = await signInUser(email, password);
 
         if (resp.status === "success") {
             loginLoading.set(false);
             goto("/dashboard");
         } else {
-            toast.push(error.message, errorTheme);
+            toast.push(resp.message, errorTheme);
             loginLoading.set(false);
             return;
         }
@@ -36,17 +34,17 @@
             </h1>
             <p class="text-3xl font-bold">Supabase</p>
             <br />
-            <form method="POST" action="?/login" use:enhance>
+            <form on:submit|preventDefault={handleLogin}>
                 <div class="flex flex-col justify-start">
                     <label for="email" class="text-start pl-1"
                         ><small>Email</small></label
                     >
                     <input
-                        name="email"
                         type="email"
                         placeholder="Email"
                         class="w-full p-2 rounded-md focus:outline-none"
                         style="background-color: #E8F0FE"
+                        bind:value={email}
                     />
                 </div>
 
@@ -55,11 +53,11 @@
                         ><small>Password</small></label
                     >
                     <input
-                        name="password"
                         type="password"
                         placeholder="Password"
                         class="w-full p-2 rounded-md focus:outline-none"
                         style="background-color: #E8F0FE"
+                        bind:value={password}
                     />
                 </div>
                 <div>
@@ -70,6 +68,7 @@
                     {:else}
                         <button
                             class="w-full bg-slate-600 text-white p-2 rounded-md mt-5 hover:bg-slate-700"
+                            type="submit"
                         >
                             Login
                         </button>
