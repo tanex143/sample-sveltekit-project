@@ -1,5 +1,4 @@
 import supabase from "../../lib/supabase";
-import { signupLoading } from "./../../stores/loading";
 
 export const actions = {
     register: async ({ request }) => {
@@ -8,22 +7,16 @@ export const actions = {
         const password = formData.get("password");
         const cpassword = formData.get("cpassword");
 
-        console.log("passwords", password, cpassword);
-        console.log("email", email);
-
-        signupLoading.set(true);
         if (password !== cpassword) {
-            signupLoading.set(false);
             return {
                 status: "error",
-                message: "Passwords do not match.",
+                message: "Password does not match.",
                 email,
                 password,
                 cpassword,
             };
         }
         if (password.length < 6 || cpassword.length < 6) {
-            signupLoading.set(false);
             return {
                 status: "error",
                 message: "Password must be at least 6 characters.",

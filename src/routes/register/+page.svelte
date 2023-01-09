@@ -9,6 +9,19 @@
     export let form;
 
     $: form && handleRedirect();
+
+    const handleFormResult = () => {
+        signupLoading.set(true);
+        return ({ result }) => {
+            if (result.data.status === "success") {
+                toast.push(result.data.message, successTheme);
+                goto("/");
+            } else {
+                toast.push(result.data.message, errorTheme);
+            }
+            signupLoading.set(false);
+        };
+    };
 </script>
 
 <div class="flex h-screen justify-center items-center bg-slate-600">
@@ -18,7 +31,11 @@
         <div class="p-10">
             <h1 class="text-3xl font-bold">Register</h1>
             <br />
-            <form method="POST" action="?/register" use:enhance>
+            <form
+                method="POST"
+                action="?/register"
+                use:enhance={handleFormResult}
+            >
                 <div class="flex flex-col justify-start">
                     <small class="text-start pl-1">Email</small>
                     <input
