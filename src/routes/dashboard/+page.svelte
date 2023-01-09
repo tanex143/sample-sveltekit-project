@@ -3,21 +3,21 @@
     import { goto } from "$app/navigation";
     import { Spinner } from "flowbite-svelte";
     import { openModal } from "svelte-modals";
-    import { selectedGroupStore } from "../../stores/groups";
-    import { selectedGroupLoading } from "../../stores/loading";
-    import userDataStore from "../../stores/userData";
+    import { selectedGroupStore } from "$stores/groups";
+    import { selectedGroupLoading } from "$stores/loading";
+    import userDataStore from "$stores/userData";
     import ProfileComment from "../../components/ProfileComment.svelte";
-    import GroupList from "../../components/dashboard/GroupList.svelte";
-    import commentsStores from "../../stores/comments";
+    import GroupList from "./GroupList.svelte";
+    import commentsStores from "$stores/comments";
     import { errorTheme } from "$lib/customToast";
-    import MemberList from "../../components/dashboard/MemberList.svelte";
+    import MemberList from "./MemberList.svelte";
     import ProfileModal from "../../components/modal/ProfileModal.svelte";
-    import { signOutUser } from "../../lib/auth/auth";
+    import { signOutUser } from "$db/auth/auth";
     import {
         getComments,
         addComment,
         supabaseCRUDListener,
-    } from "../../lib/comments/comments.js";
+    } from "$db/comments/comments.js";
 
     let currentComment;
 

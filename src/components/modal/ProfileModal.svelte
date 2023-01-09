@@ -2,11 +2,11 @@
     import supabase from "$db/database/supabase";
     import { fade } from "svelte/transition";
     import { Spinner } from "flowbite-svelte";
-    import userDataStore from "../../stores/userData";
+    import userDataStore from "$stores/userData";
     import { errorTheme, successTheme } from "$lib/customToast.js";
     import { toast } from "@zerodevx/svelte-toast";
-    import { updateProfileLoading } from "../../stores/loading.js";
-    import { updateProfile } from "../../lib/profile/profile.js";
+    import { updateProfileLoading } from "$stores/loading.js";
+    import { updateProfile } from "$db/profile/profile.js";
 
     export let isOpen;
     let profile;

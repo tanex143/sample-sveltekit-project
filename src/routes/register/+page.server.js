@@ -1,3 +1,4 @@
+// @ts-ignore
 import supabase from "$db/database/supabase";
 
 export const actions = {

@@ -2,10 +2,10 @@
     import { closeModal } from "svelte-modals";
     import { fade } from "svelte/transition";
     import { toast } from "@zerodevx/svelte-toast";
-    import userDataStore from "../../stores/userData";
+    import userDataStore from "$stores/userData";
     import { errorTheme } from "$lib/customToast";
-    import { addGroup } from "../../lib/groups/groups.js";
-    import { addGroupLoading } from "../../stores/loading.js";
+    import { addGroup } from "$db/groups/groups.js";
+    import { addGroupLoading } from "$stores/loading.js";
     import { Spinner } from "flowbite-svelte";
 
     export let isOpen;

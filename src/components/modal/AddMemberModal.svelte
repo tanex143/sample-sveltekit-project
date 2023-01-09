@@ -4,7 +4,7 @@
     import { fade } from "svelte/transition";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast";
-    import { selectedGroupStore } from "../../stores/groups";
+    import { selectedGroupStore } from "$stores/groups";
 
     export let isOpen;
     let userEmail;

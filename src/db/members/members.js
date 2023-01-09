@@ -1,6 +1,6 @@
 // @ts-nocheck
 import supabase from "$db/database/supabase";
-import membersStore from "../../stores/members";
+import membersStore from "$stores/members";
 
 export const getMembers = async (groupId) => {
     const { data } = await supabase

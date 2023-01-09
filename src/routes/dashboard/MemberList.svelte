@@ -1,14 +1,14 @@
 <script>
     import { openModal } from "svelte-modals";
     import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
-    import AddMemberList from "../modal/AddMemberModal.svelte";
-    import membersStore from "../../stores/members.js";
-    import { selectedGroupStore } from "../../stores/groups.js";
+    import AddMemberList from "../../components/modal/AddMemberModal.svelte";
+    import membersStore from "$stores/members.js";
+    import { selectedGroupStore } from "$stores/groups.js";
     import {
         deleteMember,
         getMembers,
         memberCRUDListener,
-    } from "../../lib/members/members.js";
+    } from "$db/members/members.js";
 
     const getMembersData = async () => {
         await getMembers($selectedGroupStore.id);

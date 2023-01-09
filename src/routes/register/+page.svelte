@@ -3,7 +3,7 @@
     import { Spinner } from "flowbite-svelte";
     import { errorTheme, successTheme } from "$lib/customToast";
     import { goto } from "$app/navigation";
-    import { signupLoading } from "../../stores/loading";
+    import { signupLoading } from "$stores/loading";
     import { enhance } from "$app/forms";
 
     export let form;

@@ -3,8 +3,8 @@ import { browser } from "$app/environment";
 import { toast } from "@zerodevx/svelte-toast";
 import { errorTheme } from "$lib/customToast";
 import supabase from "$db/database/supabase";
-import commentsStores from "../../stores/comments.js";
-import { selectedGroupLoading } from "../../stores/loading.js";
+import commentsStores from "$stores/comments.js";
+import { selectedGroupLoading } from "$stores/loading.js";
 
 export const getComments = async (selectedGroupStore) => {
     selectedGroupLoading.set(true);

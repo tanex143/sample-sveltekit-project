@@ -3,7 +3,7 @@
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast";
     import { Spinner } from "flowbite-svelte";
-    import { loginLoading } from "../stores/loading";
+    import { loginLoading } from "$stores/loading";
     import { signInUser } from "$db/auth/auth";
 
     let email;

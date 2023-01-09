@@ -1,17 +1,16 @@
 <script>
     import { openModal } from "svelte-modals";
-    import Modal from "../modal/Modal.svelte";
-    import { groupsStore, selectedGroupStore } from "../../stores/groups.js";
+    import Modal from "../../components/modal/Modal.svelte";
+    import { groupsStore, selectedGroupStore } from "$stores/groups.js";
     import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
     import { toast } from "@zerodevx/svelte-toast";
     import { errorTheme } from "$lib/customToast.js";
-    import userDataStore from "../../stores/userData.js";
+    import userDataStore from "$stores/userData.js";
     import {
         editGroup,
-        getGroups,
         deleteGroup,
         groupsCRUDListener,
-    } from "../../lib/groups/groups";
+    } from "$db/groups/groups";
 
     let onEdit = false;
     let toEditId = null;
@@ -37,10 +36,6 @@
         openModal(Modal);
     };
 
-    const getGroupsData = async () => {
-        await getGroups($userDataStore.email);
-    };
-
     const handleSelectGroup = (value) => {
         selectedGroupStore.set(value);
     };
@@ -51,15 +46,6 @@
             return toast.push(error.message, errorTheme);
         }
     };
-
-    const listenGetGroupsData = async () => {
-        await groupsCRUDListener($userDataStore.email);
-    };
-
-    $: {
-        getGroupsData();
-        listenGetGroupsData();
-    }
 </script>
 
 <div class="col-span-2 bg-slate-400 rounded-md p-3 overflow-y-auto">
