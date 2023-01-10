@@ -4,9 +4,8 @@ import supabase from "$db/database/supabase";
 export const actions = {
     register: async ({ request }) => {
         const formData = await request.formData();
-        const email = formData.get("email");
-        const password = formData.get("password");
-        const cpassword = formData.get("cpassword");
+        const formProps = Object.fromEntries(formData);
+        const { email, password, cpassword } = formProps;
 
         if (password !== cpassword) {
             return {
