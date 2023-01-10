@@ -6,6 +6,7 @@ import { groupsStore } from "$stores/groups";
 export const load = async () => {
     userDataStore.subscribe(async (userData) => {
         if (userData) {
+            console.log("subscribing to groups channel1");
             const { data } = await supabase
                 .from("groups")
                 .select()
@@ -13,6 +14,8 @@ export const load = async () => {
 
             groupsStore.set(data);
         }
+
+        console.log("subscribing to groups channel");
 
         await supabase
             .channel("public:groups")
@@ -30,8 +33,9 @@ export const load = async () => {
                 { event: "DELETE", schema: "*", table: "groups" },
                 (payload) => {
                     groupsStore.update((curr) => {
-                        return curr.filter(
-                            (group) => group.id !== payload.old.id
+                        return (
+                            curr &&
+                            curr.filter((group) => group.id !== payload.old.id)
                         );
                     });
                 }

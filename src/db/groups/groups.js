@@ -1,24 +1,6 @@
 // @ts-nocheck
 import supabase from "$db/database/supabase";
-import { groupsStore, selectedGroupStore } from "$stores/groups.js";
-
-export const addGroup = async (payload, userId) => {
-    const { data, error } = await supabase
-        .from("groups")
-        .insert(payload)
-        .select();
-
-    if (error) {
-        return { status: "error", message: error.message };
-    }
-
-    await supabase.from("groupMembers").insert({
-        groupId: data[0].id,
-        userId: userId,
-    });
-
-    return { status: "success", message: "Group added" };
-};
+import { selectedGroupStore } from "$stores/groups.js";
 
 export const editGroup = async (editedName, toEditId) => {
     const { error } = await supabase
