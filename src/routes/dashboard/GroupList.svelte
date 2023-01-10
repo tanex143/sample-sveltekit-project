@@ -80,8 +80,6 @@
                                 class="col-span-11 border-2 border-slate-700 rounded-md py-1 px-2"
                                 bind:value={editedName}
                                 on:blur={handleSaveChanges}
-                                on:keyup={(e) =>
-                                    e.key === "Enter" && handleSaveChanges()}
                             />
                         {:else}
                             <!-- svelte-ignore a11y-click-events-have-key-events -->
