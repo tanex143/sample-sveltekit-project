@@ -1,3 +1,4 @@
+// @ts-nocheck
 import supabase from "$db/database/supabase";
 import userDataStore from "../../stores/userData";
 
