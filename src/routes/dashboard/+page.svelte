@@ -138,8 +138,9 @@
                 </div>
             {/if}
         </div>
-
-        <MemberList />
+        {#if $selectedGroupStore}
+            <MemberList />
+        {/if}
     </div>
 
     <div

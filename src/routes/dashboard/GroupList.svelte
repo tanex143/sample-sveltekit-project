@@ -38,11 +38,13 @@
 
     const handleFormResult = () => {
         return ({ result }) => {
+            console.log("result", result);
+            console.log("groupId", $selectedGroupStore.id);
             if (result.data.status === "error") {
                 toast.push(result.data.message, errorTheme);
                 return;
             }
-            if ($selectedGroupStore.id === result.data.groupId) {
+            if ($selectedGroupStore.id == result.data.groupId) {
                 selectedGroupStore.set(null);
             }
         };
